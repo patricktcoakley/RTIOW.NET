@@ -8,10 +8,7 @@ public sealed class Ppm : ICanvas, IDisposable
 
     public Ppm(int imageWidth, int imageHeight, string path)
     {
-        _streamWriter = new StreamWriter(path)
-        {
-            AutoFlush = true
-        };
+        _streamWriter = new StreamWriter(path) { AutoFlush = true };
 
         _streamWriter.WriteLine($"P3\n{imageWidth} {imageHeight} 255");
     }
@@ -21,13 +18,7 @@ public sealed class Ppm : ICanvas, IDisposable
     {
     }
 
-    public void WriteColor(Color color)
-    {
-        _streamWriter.WriteLine($"{color.R} {color.G} {color.B}");
-    }
+    public void WriteColor(Color color) => _streamWriter.WriteLine($"{color.R} {color.G} {color.B}");
 
-    public void Dispose()
-    {
-        _streamWriter.Dispose();
-    }
+    public void Dispose() => _streamWriter.Dispose();
 }
