@@ -8,7 +8,7 @@ const float viewportHeight = 2.0f;
 const float viewportWidth = aspectRatio * viewportHeight;
 const float focalLength = 1.0f;
 
-var origin = new Vector3(viewportWidth);
+var origin = Vector3.Zero;
 var horizontal = new Vector3 { X = viewportWidth };
 var vertical = new Vector3 { Y = viewportHeight };
 var lowerLeftCorner = origin - horizontal / 2 - vertical / 2 - new Vector3 { Z = focalLength };
