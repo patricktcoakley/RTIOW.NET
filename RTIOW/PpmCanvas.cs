@@ -2,18 +2,18 @@
 
 namespace RTIOW;
 
-public sealed class Ppm : ICanvas, IDisposable
+public sealed class PpmCanvas : ICanvas, IDisposable
 {
     private readonly StreamWriter _streamWriter;
 
-    public Ppm(int imageWidth, int imageHeight, string path)
+    public PpmCanvas(int imageWidth, int imageHeight, string path)
     {
         _streamWriter = new StreamWriter(path) { AutoFlush = true };
 
         _streamWriter.WriteLine($"P3\n{imageWidth} {imageHeight} 255");
     }
 
-    public Ppm(int imageWidth, int imageHeight) : this(imageWidth, imageHeight,
+    public PpmCanvas(int imageWidth, int imageHeight) : this(imageWidth, imageHeight,
         Path.Combine(Environment.CurrentDirectory, "image.ppm"))
     {
     }

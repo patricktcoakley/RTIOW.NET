@@ -14,19 +14,18 @@ var horizontal = new Vector3 { X = viewportWidth };
 var vertical = new Vector3 { Y = viewportHeight };
 var lowerLeftCorner = origin - horizontal / 2 - vertical / 2 - new Vector3 { Z = focalLength };
 
-var world = new HittableList(
-    new Sphere(centerZ: -1.0f, radius: 0.5f),
+var world = new HittableList(new Sphere(centerZ: -1.0f, radius: 0.5f),
     new Sphere(centerY: -100.5f, centerZ: -1.0f, radius: 100f)
 );
 
-using var ppmFile = new Ppm(imageWidth, imageHeight);
+using var ppmFile = new PpmCanvas(imageWidth, imageHeight);
 
-for (var j = imageHeight - 1; j >= 0; --j)
+for (var y = imageHeight - 1; y >= 0; --y)
 {
-    for (var i = 0; i < imageWidth; ++i)
+    for (var x = 0; x < imageWidth; ++x)
     {
-        var u = (float)i / (imageWidth - 1);
-        var v = (float)j / (imageHeight - 1);
+        var u = (float)x / (imageWidth - 1);
+        var v = (float)y / (imageHeight - 1);
         var ray = new Ray(origin, lowerLeftCorner + u * horizontal + v * vertical - origin);
         ppmFile.WriteColor(HitColor(ray, world));
     }

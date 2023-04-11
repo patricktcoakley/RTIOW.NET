@@ -9,9 +9,9 @@ public class HitRecord
     public float T { get; set; }
     public bool FrontFace { get; set; }
 
-    public void SetFaceNormal(Ray ray, Vector3 OutwardNormal)
+    public void SetFaceNormal(Ray ray, Vector3 outwardNormal)
     {
-        FrontFace = Vector3.Dot(ray.Direction, OutwardNormal) < 0;
-        Normal = FrontFace ? OutwardNormal : -OutwardNormal;
+        FrontFace = Vector3.Dot(ray.Direction, outwardNormal) < 0;
+        Normal = FrontFace ? outwardNormal : -outwardNormal;
     }
 }

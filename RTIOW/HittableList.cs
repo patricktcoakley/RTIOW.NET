@@ -2,12 +2,12 @@
 
 public class HittableList : IHittable
 {
+    private readonly List<IHittable> _objects = new();
+
     public HittableList(params IHittable[] objects)
     {
         _objects.AddRange(objects);
     }
-
-    private List<IHittable> _objects { get; } = new();
 
     public bool Hit(Ray ray, float tMin, float tMax, ref HitRecord hitRecord)
     {

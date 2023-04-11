@@ -2,22 +2,12 @@
 
 namespace RTIOW;
 
-public class Sphere : IHittable
+public record Sphere(Vector3 Center, float Radius) : IHittable
 {
     public Sphere(float centerX = 0.0f, float centerY = 0.0f, float centerZ = 0.0f, float radius = 0.0f) : this(
         new Vector3(centerX, centerY, centerZ), radius)
     {
     }
-
-    public Sphere(Vector3 center, float radius)
-    {
-        Center = center;
-        Radius = radius;
-    }
-
-    public Vector3 Center { get; set; }
-    public float Radius { get; set; }
-
 
     public bool Hit(Ray ray, float tMin, float tMax, ref HitRecord hitRecord)
     {
