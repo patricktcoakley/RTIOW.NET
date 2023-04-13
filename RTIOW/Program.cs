@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using RTIOW;
 using static RTIOW.Vector3Extensions;
+using Random = System.Random;
 
 const float aspectRatio = 16.0f / 9.0f;
 const int imageWidth = 400;
@@ -8,7 +9,6 @@ const int imageHeight = (int)(imageWidth / aspectRatio);
 const int samplesPerPixel = 100;
 const int maxDepth = 50;
 
-var random = new Random();
 var world = new HittableList(
     new Sphere(centerZ: -1.0f, radius: 0.5f),
     new Sphere(centerY: -100.5f, centerZ: -1.0f, radius: 100f)
@@ -25,8 +25,8 @@ for (var y = imageHeight - 1; y >= 0; --y)
         var pixel = new Vector3();
         for (var s = 0; s < samplesPerPixel; ++s)
         {
-            var u = (x + random.NextSingle()) / (imageWidth - 1);
-            var v = (y + random.NextSingle()) / (imageHeight - 1);
+            var u = (x + Random.Shared.NextSingle()) / (imageWidth - 1);
+            var v = (y + Random.Shared.NextSingle()) / (imageHeight - 1);
             var ray = camera.Ray(u, v);
             pixel += HitColor(ray, world, maxDepth);
         }
@@ -45,7 +45,7 @@ Vector3 HitColor(Ray ray, IHittable hittable, int depth)
     var hr = new HitRecord();
     if (hittable.Hit(ray, 0.001f, float.PositiveInfinity, ref hr))
     {
-        var target = hr.Point + RandomInHemisphere(hr.Normal, random);
+        var target = hr.Point + RandomInHemisphere(hr.Normal);
         return 0.5f * HitColor(new Ray(hr.Point, target - hr.Point), world, depth - 1);
     }
 

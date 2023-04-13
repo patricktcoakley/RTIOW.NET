@@ -18,25 +18,25 @@ public static class Vector3Extensions
             (int)(256 * Single.Clamp(b, 0.0f, 0.999f)));
     }
 
-    public static Vector3 Random(Random random) =>
+    public static Vector3 Random() =>
         new(
-            random.NextSingle(),
-            random.NextSingle(),
-            random.NextSingle()
+            System.Random.Shared.NextSingle(),
+            System.Random.Shared.NextSingle(),
+            System.Random.Shared.NextSingle()
         );
 
-    public static Vector3 Random(Random random, float min, float max) =>
+    public static Vector3 Random(float min, float max) =>
         new(
-            random.NextSingle(min, max),
-            random.NextSingle(min, max),
-            random.NextSingle(min, max)
+            System.Random.Shared.NextSingle(min, max),
+            System.Random.Shared.NextSingle(min, max),
+            System.Random.Shared.NextSingle(min, max)
         );
 
-    public static Vector3 RandomInUnitSphere(Random random)
+    public static Vector3 RandomInUnitSphere()
     {
         while (true)
         {
-            var p = Random(random, -1f, 1f);
+            var p = Random(-1f, 1f);
             if (p.LengthSquared() >= 1)
             {
                 continue;
@@ -46,11 +46,11 @@ public static class Vector3Extensions
         }
     }
 
-    public static Vector3 RandomUnitVector(Random random) => Vector3.Normalize(RandomInUnitSphere(random));
+    public static Vector3 RandomUnitVector() => Vector3.Normalize(RandomInUnitSphere());
 
-    public static Vector3 RandomInHemisphere(Vector3 normal, Random random)
+    public static Vector3 RandomInHemisphere(Vector3 normal)
     {
-        var inUnitSphere = RandomInUnitSphere(random);
+        var inUnitSphere = RandomInUnitSphere();
         return Vector3.Dot(inUnitSphere, normal) > 0 ? inUnitSphere : -inUnitSphere;
     }
 }
