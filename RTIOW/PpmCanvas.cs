@@ -8,8 +8,7 @@ public sealed class PpmCanvas : ICanvas, IDisposable
 
     public PpmCanvas(int imageWidth, int imageHeight, string path)
     {
-        _streamWriter = new StreamWriter(path) { AutoFlush = true };
-
+        _streamWriter = new StreamWriter(path);
         _streamWriter.WriteLine($"P3\n{imageWidth} {imageHeight} 255");
     }
 
