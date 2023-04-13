@@ -2,7 +2,7 @@
 
 namespace RTIOW;
 
-public readonly record struct Sphere(Vector3 Center, float Radius) : IHittable
+public record Sphere(Vector3 Center, float Radius) : IHittable
 {
     public Sphere(float centerX = 0.0f, float centerY = 0.0f, float centerZ = 0.0f, float radius = 0.0f) : this(
         new Vector3(centerX, centerY, centerZ), radius)

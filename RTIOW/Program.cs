@@ -1,12 +1,16 @@
 ﻿using System.Numerics;
 using RTIOW;
+using static RTIOW.Vector3Extensions;
 
 const float aspectRatio = 16.0f / 9.0f;
 const int imageWidth = 400;
 const int imageHeight = (int)(imageWidth / aspectRatio);
 const int samplesPerPixel = 100;
+const int maxDepth = 50;
 
-var world = new HittableList(new Sphere(centerZ: -1.0f, radius: 0.5f),
+var random = new Random();
+var world = new HittableList(
+    new Sphere(centerZ: -1.0f, radius: 0.5f),
     new Sphere(centerY: -100.5f, centerZ: -1.0f, radius: 100f)
 );
 
@@ -21,22 +25,28 @@ for (var y = imageHeight - 1; y >= 0; --y)
         var pixel = new Vector3();
         for (var s = 0; s < samplesPerPixel; ++s)
         {
-            var u = (float)x / (imageWidth - 1);
-            var v = (float)y / (imageHeight - 1);
+            var u = (x + random.NextSingle()) / (imageWidth - 1);
+            var v = (y + random.NextSingle()) / (imageHeight - 1);
             var ray = camera.Ray(u, v);
-            pixel += HitColor(ray, world);
+            pixel += HitColor(ray, world, maxDepth);
         }
 
-        ppmFile.WriteColor(pixel.ToColor());
+        ppmFile.WriteColor(pixel.ToColor(samplesPerPixel));
     }
 }
 
-Vector3 HitColor(Ray ray, IHittable hittable)
+Vector3 HitColor(Ray ray, IHittable hittable, int depth)
 {
-    var tempHitRecord = new HitRecord();
-    if (hittable.Hit(ray, 0.0f, float.MaxValue, ref tempHitRecord))
+    if (depth <= 0)
     {
-        return 0.5f * (tempHitRecord.Normal + new Vector3(1.0f, 1.0f, 1.0f));
+        return Vector3.Zero;
+    }
+
+    var hr = new HitRecord();
+    if (hittable.Hit(ray, 0.001f, float.PositiveInfinity, ref hr))
+    {
+        var target = hr.Point + RandomInHemisphere(hr.Normal, random);
+        return 0.5f * HitColor(new Ray(hr.Point, target - hr.Point), world, depth - 1);
     }
 
     var unitDirection = Vector3.Normalize(ray.Direction);
