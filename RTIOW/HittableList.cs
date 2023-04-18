@@ -32,4 +32,5 @@ public class HittableList : IHittable
 
     public void Clear() => _objects.Clear();
     public void Add(IHittable hittable) => _objects.Add(hittable);
+    public void AddRange(ICollection<IHittable> hittables) => _objects.AddRange(hittables);
 }

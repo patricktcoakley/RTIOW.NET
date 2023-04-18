@@ -9,6 +9,7 @@ public ref struct HitRecord
     public Vector3 Point { get; set; }
     public Vector3 Normal { get; set; }
     public float T { get; set; }
+    public IMaterial Material { get; set; }
 
     public void SetFaceNormal(Ray ray, Vector3 outwardNormal)
     {

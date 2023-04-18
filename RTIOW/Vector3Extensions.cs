@@ -46,6 +46,14 @@ public static class Vector3Extensions
         }
     }
 
+    public static bool NearZero(this Vector3 v)
+    {
+        const double s = 1e-8;
+        return Math.Abs(v.X) < s && Math.Abs(v.Y) < s && Math.Abs(v.Z) < s;
+    }
+
+    public static Vector3 Reflect(Vector3 lhs, Vector3 rhs) => lhs - 2.0f * Vector3.Dot(lhs, rhs) * rhs;
+
     public static Vector3 RandomUnitVector() => Vector3.Normalize(RandomInUnitSphere());
 
     public static Vector3 RandomInHemisphere(Vector3 normal)

@@ -1,7 +1,5 @@
 ﻿using System.Numerics;
 using RTIOW;
-using static RTIOW.Vector3Extensions;
-using Random = System.Random;
 
 const float aspectRatio = 16.0f / 9.0f;
 const int imageWidth = 400;
@@ -9,10 +7,17 @@ const int imageHeight = (int)(imageWidth / aspectRatio);
 const int samplesPerPixel = 100;
 const int maxDepth = 50;
 
-var world = new HittableList(
-    new Sphere(centerZ: -1.0f, radius: 0.5f),
-    new Sphere(centerY: -100.5f, centerZ: -1.0f, radius: 100f)
-);
+var world = new HittableList();
+
+var ground = new Lambertian(new Vector3(0.8f, 0.8f, 0.0f));
+var center = new Lambertian(new Vector3(0.7f, 0.3f, 0.3f));
+var left = new Metal(new Vector3(0.8f), 0.3f);
+var right = new Metal(new Vector3(0.8f, 0.6f, 0.0f), 1.0f);
+
+world.Add(new Sphere(0.0f, -100.5f, -1.0f, 100.0f, ground));
+world.Add(new Sphere(0.0f, 0f, -1.0f, 0.5f, center));
+world.Add(new Sphere(-1.0f, 0f, -1.0f, 0.5f, left));
+world.Add(new Sphere(1.0f, 0f, -1.0f, 0.5f, right));
 
 var camera = new Camera();
 
@@ -45,8 +50,14 @@ Vector3 HitColor(Ray ray, IHittable hittable, int depth)
     var hr = new HitRecord();
     if (hittable.Hit(ray, 0.001f, float.PositiveInfinity, ref hr))
     {
-        var target = hr.Point + RandomInHemisphere(hr.Normal);
-        return 0.5f * HitColor(new Ray(hr.Point, target - hr.Point), world, depth - 1);
+        var scattered = new Ray();
+        var attenuation = Vector3.Zero;
+        if (hr.Material.Scatter(ray, hr, ref attenuation, ref scattered))
+        {
+            return attenuation * HitColor(scattered, world, depth - 1);
+        }
+
+        return Vector3.Zero;
     }
 
     var unitDirection = Vector3.Normalize(ray.Direction);

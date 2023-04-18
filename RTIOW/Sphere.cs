@@ -2,10 +2,10 @@
 
 namespace RTIOW;
 
-public record Sphere(Vector3 Center, float Radius) : IHittable
+public record Sphere(Vector3 Center, float Radius, IMaterial Material) : IHittable
 {
-    public Sphere(float centerX = 0.0f, float centerY = 0.0f, float centerZ = 0.0f, float radius = 0.0f) : this(
-        new Vector3(centerX, centerY, centerZ), radius)
+    public Sphere(float centerX, float centerY, float centerZ, float radius, IMaterial material) : this(
+        new Vector3(centerX, centerY, centerZ), radius, material)
     {
     }
 
@@ -37,6 +37,7 @@ public record Sphere(Vector3 Center, float Radius) : IHittable
         hitRecord.Point = ray.At(hitRecord.T);
         var outwardNormal = (hitRecord.Point - Center) / Radius;
         hitRecord.SetFaceNormal(ray, outwardNormal);
+        hitRecord.Material = Material;
 
         return true;
     }
