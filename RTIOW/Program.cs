@@ -12,7 +12,7 @@ var world = new HittableList();
 var ground = new Lambertian(new Vector3(0.8f, 0.8f, 0.0f));
 var center = new Lambertian(new Vector3(0.7f, 0.3f, 0.3f));
 var left = new Metal(new Vector3(0.8f), 0.3f);
-var right = new Metal(new Vector3(0.8f, 0.6f, 0.0f), 1.0f);
+var right = new Metal(new Vector3(0.8f, 0.6f, 0.2f), 1.0f);
 
 world.Add(new Sphere(0.0f, -100.5f, -1.0f, 100.0f, ground));
 world.Add(new Sphere(0.0f, 0f, -1.0f, 0.5f, center));
@@ -28,7 +28,7 @@ for (var y = imageHeight - 1; y >= 0; --y)
     for (var x = 0; x < imageWidth; ++x)
     {
         var pixel = new Vector3();
-        for (var s = 0; s < samplesPerPixel; ++s)
+        for (var s = samplesPerPixel; s > 0; s--)
         {
             var u = (x + Random.Shared.NextSingle()) / (imageWidth - 1);
             var v = (y + Random.Shared.NextSingle()) / (imageHeight - 1);
@@ -39,6 +39,8 @@ for (var y = imageHeight - 1; y >= 0; --y)
         ppmFile.WriteColor(pixel.ToColor(samplesPerPixel));
     }
 }
+
+return;
 
 Vector3 HitColor(Ray ray, IHittable hittable, int depth)
 {
@@ -52,7 +54,7 @@ Vector3 HitColor(Ray ray, IHittable hittable, int depth)
     {
         var scattered = new Ray();
         var attenuation = Vector3.Zero;
-        if (hr.Material.Scatter(ray, hr, ref attenuation, ref scattered))
+        if (hr.Material!.Scatter(ray, hr, ref attenuation, ref scattered))
         {
             return attenuation * HitColor(scattered, world, depth - 1);
         }
