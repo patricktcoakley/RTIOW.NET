@@ -1,4 +1,4 @@
-﻿namespace RTIOW;
+﻿namespace RTIOW.Math;
 
 public static class RandomExtensions
 {

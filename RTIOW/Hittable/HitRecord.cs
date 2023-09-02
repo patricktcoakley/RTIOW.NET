@@ -1,10 +1,12 @@
 ﻿using System.Numerics;
+using RTIOW.Material;
+using RTIOW.Math;
 
-namespace RTIOW;
+namespace RTIOW.Hittable;
 
 public class HitRecord
 {
-    private bool _frontFace;
+    public bool FrontFace { get; private set; }
 
     public Vector3 Point { get; set; }
     public Vector3 Normal { get; set; }
@@ -13,7 +15,7 @@ public class HitRecord
 
     public void SetFaceNormal(Ray ray, Vector3 outwardNormal)
     {
-        _frontFace = Vector3.Dot(ray.Direction, outwardNormal) < 0;
-        Normal = _frontFace ? outwardNormal : -outwardNormal;
+        FrontFace = Vector3.Dot(ray.Direction, outwardNormal) < 0;
+        Normal = FrontFace ? outwardNormal : -outwardNormal;
     }
 }

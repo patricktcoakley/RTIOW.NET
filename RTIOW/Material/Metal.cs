@@ -1,7 +1,9 @@
 using System.Numerics;
-using static RTIOW.Vector3Extensions;
+using RTIOW.Hittable;
+using RTIOW.Math;
+using static RTIOW.Math.Vector3Extensions;
 
-namespace RTIOW;
+namespace RTIOW.Material;
 
 public record Metal(Vector3 Albedo, float Fuzziness) : IMaterial
 {

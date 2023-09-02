@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace RTIOW;
+namespace RTIOW.Canvas;
 
 public sealed record PpmCanvas : IDisposable
 {

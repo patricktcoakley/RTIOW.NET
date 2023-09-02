@@ -1,6 +1,8 @@
 using System.Numerics;
+using RTIOW.Hittable;
+using RTIOW.Math;
 
-namespace RTIOW;
+namespace RTIOW.Material;
 
 public record Lambertian(Vector3 Albedo) : IMaterial
 {

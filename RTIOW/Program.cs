@@ -1,5 +1,9 @@
 ﻿using System.Numerics;
 using RTIOW;
+using RTIOW.Canvas;
+using RTIOW.Hittable;
+using RTIOW.Material;
+using RTIOW.Math;
 
 const float aspectRatio = 16.0f / 9.0f;
 const int imageWidth = 400;
@@ -10,13 +14,14 @@ const int maxDepth = 50;
 var world = new HittableList();
 
 var ground = new Lambertian(new Vector3(0.8f, 0.8f, 0.0f));
-var center = new Lambertian(new Vector3(0.7f, 0.3f, 0.3f));
-var left = new Metal(new Vector3(0.8f), 0.3f);
-var right = new Metal(new Vector3(0.8f, 0.6f, 0.2f), 1.0f);
+var center = new Lambertian(new Vector3(0.1f, 0.2f, 0.5f));
+var left = new Dialectric(1.5f);
+var right = new Metal(new Vector3(0.8f, 0.6f, 0.2f), 0.0f);
 
 world.Add(new Sphere(0.0f, -100.5f, -1.0f, 100.0f, ground));
 world.Add(new Sphere(0.0f, 0f, -1.0f, 0.5f, center));
 world.Add(new Sphere(-1.0f, 0f, -1.0f, 0.5f, left));
+world.Add(new Sphere(-1.0f, 0f, -1.0f, -0.4f, left));
 world.Add(new Sphere(1.0f, 0f, -1.0f, 0.5f, right));
 
 var camera = new Camera();

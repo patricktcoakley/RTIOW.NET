@@ -1,6 +1,8 @@
 ﻿using System.Numerics;
+using RTIOW.Material;
+using RTIOW.Math;
 
-namespace RTIOW;
+namespace RTIOW.Hittable;
 
 public record Sphere(Vector3 Center, float Radius, IMaterial Material) : IHittable
 {

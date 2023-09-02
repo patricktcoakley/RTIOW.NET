@@ -1,4 +1,6 @@
-﻿namespace RTIOW;
+﻿using RTIOW.Math;
+
+namespace RTIOW.Hittable;
 
 public class HittableList : IHittable
 {

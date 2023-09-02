@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace RTIOW;
+namespace RTIOW.Math;
 
 public readonly record struct Ray(Vector3 Origin, Vector3 Direction)
 {
