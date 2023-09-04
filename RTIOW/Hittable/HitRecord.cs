@@ -4,7 +4,7 @@ using RTIOW.Math;
 
 namespace RTIOW.Hittable;
 
-public class HitRecord
+public struct HitRecord
 {
     public bool FrontFace { get; private set; }
 

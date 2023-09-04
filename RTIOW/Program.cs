@@ -41,12 +41,13 @@ internal static class Program
             for (var x = 0; x < imageWidth; ++x)
             {
                 var pixel = new Vector3();
+                var hr = new HitRecord();
                 for (var s = samplesPerPixel; s > 0; s--)
                 {
                     var u = (x + Random.Shared.NextSingle()) / (imageWidth - 1);
                     var v = (y + Random.Shared.NextSingle()) / (imageHeight - 1);
                     var ray = camera.Ray(u, v);
-                    pixel += HitColor(ray, world, maxDepth);
+                    pixel += HitColor(ray, world, maxDepth, ref hr);
                 }
 
                 ppmFile.WriteColor(pixel.ToColor(samplesPerPixel));
@@ -55,21 +56,20 @@ internal static class Program
 
         return;
 
-        Vector3 HitColor(Ray ray, IHittable hittable, int depth)
+        Vector3 HitColor(Ray ray, IHittable hittable, int depth, ref HitRecord hr)
         {
             if (depth <= 0)
             {
                 return Vector3.Zero;
             }
 
-            var hr = new HitRecord();
             if (hittable.Hit(ray, 0.001f, float.PositiveInfinity, ref hr))
             {
                 var scattered = new Ray();
                 var attenuation = Vector3.Zero;
                 if (hr.Material!.Scatter(ray, hr, ref attenuation, ref scattered))
                 {
-                    return attenuation * HitColor(scattered, world, depth - 1);
+                    return attenuation * HitColor(scattered, world, depth - 1, ref hr);
                 }
 
                 return Vector3.Zero;
