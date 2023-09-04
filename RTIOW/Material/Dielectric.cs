@@ -4,7 +4,7 @@ using RTIOW.Math;
 
 namespace RTIOW.Material;
 
-public record Dialectric(float IndexOfRefraction) : IMaterial
+public record Dielectric(float IndexOfRefraction) : IMaterial
 {
     public bool Scatter(Ray ray, HitRecord hr, ref Vector3 attenuation, ref Ray scattered)
     {
