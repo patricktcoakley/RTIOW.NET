@@ -10,30 +10,19 @@ internal static class Program
 {
     public static void Main(string[] args)
     {
-        const float aspectRatio = 16.0f / 9.0f;
+        const float aspectRatio = 3.0f / 2.0f;
         const int imageWidth = 400;
         const int imageHeight = (int)(imageWidth / aspectRatio);
         const int samplesPerPixel = 100;
         const int maxDepth = 50;
 
-        var world = new HittableList();
+        var world = RandomScene();
 
-        var ground = new Lambertian(new Vector3(0.8f, 0.8f, 0.0f));
-        var center = new Lambertian(new Vector3(0.1f, 0.2f, 0.5f));
-        var left = new Dielectric(1.5f);
-        var right = new Metal(new Vector3(0.8f, 0.6f, 0.2f), 0.0f);
-
-        world.Add(new Sphere(new Vector3(0.0f, -100.5f, -1.0f), 100.0f, ground));
-        world.Add(new Sphere(new Vector3(0.0f, 0.0f, -1.0f), 0.5f, center));
-        world.Add(new Sphere(new Vector3(-1.0f, 0.0f, -1.0f), 0.5f, left));
-        world.Add(new Sphere(new Vector3(-1.0f, 0.0f, -1.0f), -0.45f, left));
-        world.Add(new Sphere(new Vector3(1.0f, 0.0f, -1.0f), 0.5f, right));
-
-        var lookFrom = new Vector3(3.0f, 3.0f, 2.0f);
-        var lookAt = new Vector3(0.0f, 0.0f, -1.0f);
+        var lookFrom = new Vector3(13.0f, 2.0f, 3.0f);
+        var lookAt = new Vector3(0.0f, 0.0f, 0.0f);
         var verticalUp = new Vector3(0.0f, 1.0f, 0.0f);
-        var focusDistance = (lookFrom - lookAt).Length();
-        const float aperture = 2.0f;
+        const float focusDistance = 10.0f;
+        const float aperture = 0.1f;
         var camera = new Camera(
             lookFrom,
             lookAt,
@@ -88,5 +77,58 @@ internal static class Program
             var t = 0.5f * (unitDirection.Y + 1.0f);
             return (1.0f - t) * Vector3.One + t * new Vector3(0.5f, 0.7f, 1.0f);
         }
+    }
+
+    private static HittableList RandomScene()
+    {
+        var world = new HittableList();
+        var ground = new Lambertian(new Vector3(0.5f, 0.5f, 0.5f));
+        world.Add(new Sphere(new Vector3(0.0f, -1000.0f, 0.0f), 1000.0f, ground));
+
+
+        for (var a = -11; a < 11; a++)
+        {
+            for (var b = -11; b < 11; b++)
+            {
+                var chooseMat = Random.Shared.NextSingle();
+                var center = new Vector3((float)(a + 0.9 * Random.Shared.NextSingle()), 0.2f, b + 0.9f * Random.Shared.NextSingle());
+
+                if ((center - new Vector3(4.0f, 0.2f, 0.0f)).Length() > 0.9f)
+                {
+                    IMaterial sphereMaterial;
+
+                    if (chooseMat < 0.8f)
+                    {
+                        var albedo = Vector3Extensions.Random() * Vector3Extensions.Random();
+                        sphereMaterial = new Lambertian(albedo);
+                        world.Add(new Sphere(center, 0.2f, sphereMaterial));
+                    }
+                    else if (chooseMat < 0.95)
+                    {
+                        var albedo = Vector3Extensions.Random(0.5f, 1.0f);
+                        var fuzz = Random.Shared.NextSingle(0.0f, 0.5f);
+                        sphereMaterial = new Metal(albedo, fuzz);
+                        world.Add(new Sphere(center, 0.2f, sphereMaterial));
+                    }
+                    else
+                    {
+                        sphereMaterial = new Dielectric(1.5f);
+                        world.Add(new Sphere(center, 0.2f, sphereMaterial));
+                    }
+                }
+            }
+        }
+
+        var material1 = new Dielectric(1.5f);
+        world.Add(new Sphere(new Vector3(0.0f, 1.0f, 0.0f), 1.0f, material1));
+
+        var material2 = new Lambertian(new Vector3(0.4f, 0.2f, 0.1f));
+        world.Add(new Sphere(new Vector3(-4.0f, 1.0f, 0.0f), 1.0f, material2));
+
+        var material3 = new Metal(new Vector3(0.7f, 0.6f, 0.5f), 0.0f);
+        world.Add(new Sphere(new Vector3(4.0f, 1.0f, 0.0f), 1.0f, material3));
+
+
+        return world;
     }
 }
