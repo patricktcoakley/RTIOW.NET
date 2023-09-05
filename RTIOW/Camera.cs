@@ -13,8 +13,6 @@ public record Camera
     private readonly Vector3 _u;
     private readonly Vector3 _v;
     private readonly Vector3 _vertical;
-    private readonly Vector3 _w;
-
 
     public Camera(
         Vector3 lookFrom,
@@ -26,19 +24,18 @@ public record Camera
         float focusDistance
     )
     {
-        const float focalLength = 1.0f;
         var theta = DegreesToRadians(verticalFieldOfView);
         var h = MathF.Tan(theta / 2.0f);
         var viewportHeight = 2.0f * h;
         var viewportWidth = aspectRatio * viewportHeight;
+        var w = Vector3.Normalize(lookFrom - lookAt);
 
-        _w = Vector3.Normalize(lookFrom - lookAt);
-        _u = Vector3.Normalize(Vector3.Cross(verticalUp, _w));
-        _v = Vector3.Cross(_w, _u);
+        _u = Vector3.Normalize(Vector3.Cross(verticalUp, w));
+        _v = Vector3.Cross(w, _u);
         _origin = lookFrom;
         _horizontal = focusDistance * viewportWidth * _u;
         _vertical = focusDistance * viewportHeight * _v;
-        _lowerLeftCorner = _origin - _horizontal / 2 - _vertical / 2 - focusDistance * _w;
+        _lowerLeftCorner = _origin - _horizontal / 2 - _vertical / 2 - focusDistance * w;
         _lensRadius = aperture / 2.0f;
     }
 
