@@ -20,19 +20,28 @@ internal static class Program
 
         var ground = new Lambertian(new Vector3(0.8f, 0.8f, 0.0f));
         var center = new Lambertian(new Vector3(0.1f, 0.2f, 0.5f));
-        var left   = new Dielectric(1.5f);
-        var right  = new Metal(new Vector3(0.8f, 0.6f, 0.2f), 0.0f);
+        var left = new Dielectric(1.5f);
+        var right = new Metal(new Vector3(0.8f, 0.6f, 0.2f), 0.0f);
 
-        world.Add(new Sphere(new Vector3( 0.0f, -100.5f, -1.0f), 100.0f, ground));
-        world.Add(new Sphere(new Vector3( 0.0f,    0.0f, -1.0f),   0.5f, center));
-        world.Add(new Sphere(new Vector3(-1.0f,    0.0f, -1.0f),   0.5f, left));
-        world.Add(new Sphere(new Vector3(-1.0f,    0.0f, -1.0f), -0.45f, left));
+        world.Add(new Sphere(new Vector3(0.0f, -100.5f, -1.0f), 100.0f, ground));
+        world.Add(new Sphere(new Vector3(0.0f, 0.0f, -1.0f), 0.5f, center));
+        world.Add(new Sphere(new Vector3(-1.0f, 0.0f, -1.0f), 0.5f, left));
+        world.Add(new Sphere(new Vector3(-1.0f, 0.0f, -1.0f), -0.45f, left));
         world.Add(new Sphere(new Vector3(1.0f, 0.0f, -1.0f), 0.5f, right));
 
-        var lookFrom = new Vector3(-2.0f, 2.0f, 1.0f);
+        var lookFrom = new Vector3(3.0f, 3.0f, 2.0f);
         var lookAt = new Vector3(0.0f, 0.0f, -1.0f);
         var verticalUp = new Vector3(0.0f, 1.0f, 0.0f);
-        var camera = new Camera(lookFrom, lookAt, verticalUp, 20.0f, aspectRatio);
+        var focusDistance = (lookFrom - lookAt).Length();
+        const float aperture = 2.0f;
+        var camera = new Camera(
+            lookFrom,
+            lookAt,
+            verticalUp,
+            20.0f,
+            aspectRatio,
+            aperture,
+            focusDistance);
 
         using var ppmFile = new PpmCanvas(imageWidth, imageHeight);
 

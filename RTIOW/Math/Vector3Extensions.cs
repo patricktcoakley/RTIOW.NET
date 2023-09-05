@@ -46,6 +46,18 @@ public static class Vector3Extensions
         }
     }
 
+    public static Vector3 RandomInUnitDisk()
+    {
+        while (true)
+        {
+            var p = new Vector3(System.Random.Shared.NextSingle(-1.0f, 1.0f), System.Random.Shared.NextSingle(-1.0f, 1.0f), 0.0f);
+            if (!(p.LengthSquared() >= 1.0f))
+            {
+                return p;
+            }
+        }
+    }
+
     public static bool NearZero(this Vector3 v)
     {
         const double s = 1e-8;
