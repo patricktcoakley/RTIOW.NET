@@ -2,7 +2,6 @@
 using RTIOW.Canvas;
 using RTIOW.Hittable;
 using RTIOW.Material;
-using RTIOW.Math;
 
 namespace RTIOW;
 
@@ -11,10 +10,11 @@ internal static class Program
     private const int ImageWidth = 1200;
     private const float AspectRatio = 3.0f / 2.0f;
     private const int ImageHeight = (int)(ImageWidth / AspectRatio);
-    private const int SamplesPerPixel = 500;
+    private const int SamplesPerPixel = 1000;
     private const int MaxDepth = 50;
     private const float FocusDistance = 10.0f;
     private const float Aperture = 0.1f;
+    private static Camera _camera = default!;
     private static readonly HittableList World = RandomScene();
 
     public static void Main(string[] args)
@@ -22,7 +22,7 @@ internal static class Program
         var lookFrom = new Vector3(13.0f, 2.0f, 3.0f);
         var lookAt = new Vector3(0.0f, 0.0f, 0.0f);
         var verticalUp = new Vector3(0.0f, 1.0f, 0.0f);
-        var camera = new Camera(
+        _camera = new Camera(
             lookFrom,
             lookAt,
             verticalUp,
@@ -31,25 +31,18 @@ internal static class Program
             Aperture,
             FocusDistance);
 
-        using var ppmFile = new PpmCanvas(ImageWidth, ImageHeight);
+        using var pngFile = new PngCanvas(ImageWidth, ImageHeight);
 
-        var pixels = new Vector3[ImageWidth, ImageHeight];
         Parallel.For(0, ImageWidth, x =>
         {
             for (var y = ImageHeight - 1; y >= 0; --y)
             {
-                var pixel = SamplePixel(x, y, camera);
-                pixels[x, y] = pixel;
+                var pixel = SamplePixel(x, y, _camera);
+                pngFile.Draw(x, y, pixel.ToColor(SamplesPerPixel));
             }
         });
 
-        for (var y = ImageHeight - 1; y >= 0; --y)
-        {
-            for (var x = 0; x < ImageWidth; ++x)
-            {
-                ppmFile.WriteColor(pixels[x, y].ToColor(SamplesPerPixel));
-            }
-        }
+        pngFile.View();
     }
 
 
@@ -72,7 +65,7 @@ internal static class Program
         return pixel;
     }
 
-    private static Vector3 HitColor(Ray ray, IHittable hittable, int depth, ref HitRecord hr)
+    private static Vector3 HitColor(Ray ray, HittableList hittable, int depth, ref HitRecord hr)
     {
         if (depth <= 0)
         {
@@ -83,7 +76,7 @@ internal static class Program
         {
             var scattered = new Ray();
             var attenuation = Vector3.Zero;
-            if (hr.Material!.Scatter(ray, hr, ref attenuation, ref scattered))
+            if (hr.Material?.Scatter(ray, hr, ref attenuation, ref scattered) ?? false)
             {
                 return attenuation * HitColor(scattered, World, depth - 1, ref hr);
             }
@@ -92,13 +85,13 @@ internal static class Program
         }
 
         var unitDirection = Vector3.Normalize(ray.Direction);
-        var t = 0.5f * (unitDirection.Y + 1.0f);
-        return (1.0f - t) * Vector3.One + t * new Vector3(0.5f, 0.7f, 1.0f);
+        var a = 0.5f * (unitDirection.Y + 1.0f);
+        return (1.0f - a) * Vector3.One + a * new Vector3(0.5f, 0.7f, 1.0f);
     }
 
     private static HittableList RandomScene()
     {
-        var world = new HittableList();
+        var world = new List<IHittable>();
         var ground = new Lambertian(new Vector3(0.5f, 0.5f, 0.5f));
         world.Add(new Sphere(new Vector3(0.0f, -1000.0f, 0.0f), 1000.0f, ground));
 
@@ -144,6 +137,6 @@ internal static class Program
         var metal = new Metal(new Vector3(0.7f, 0.6f, 0.5f), 0.0f);
         world.Add(new Sphere(new Vector3(4.0f, 1.0f, 0.0f), 1.0f, metal));
 
-        return world;
+        return new HittableList(world);
     }
 }

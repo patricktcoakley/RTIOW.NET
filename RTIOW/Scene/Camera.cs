@@ -1,6 +1,4 @@
 using System.Numerics;
-using RTIOW.Math;
-using static RTIOW.Math.Vector3Extensions;
 
 namespace RTIOW;
 
@@ -41,7 +39,7 @@ public record Camera
 
     public Ray Ray(float s, float t)
     {
-        var rd = _lensRadius * RandomInUnitDisk();
+        var rd = _lensRadius * Vector3Extensions.RandomInUnitDisk();
         var offset = _u * rd.X + _v * rd.Y;
         return new Ray(_origin + offset, _lowerLeftCorner + s * _horizontal + t * _vertical - _origin - offset);
     }

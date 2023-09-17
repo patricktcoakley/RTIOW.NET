@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Numerics;
+﻿using System.Numerics;
 
 namespace RTIOW.Math;
 
@@ -11,11 +10,11 @@ public static class Vector3Extensions
         var r = MathF.Sqrt(v.X * scale);
         var g = MathF.Sqrt(v.Y * scale);
         var b = MathF.Sqrt(v.Z * scale);
-
         return Color.FromArgb(
-            (int)(256 * Single.Clamp(r, 0.0f, 0.999f)),
-            (int)(256 * Single.Clamp(g, 0.0f, 0.999f)),
-            (int)(256 * Single.Clamp(b, 0.0f, 0.999f)));
+            byte.Clamp((byte)(r * 255), 0, 255),
+            byte.Clamp((byte)(g * 255), 0, 255),
+            byte.Clamp((byte)(b * 255), 0, 255)
+        );
     }
 
     public static Vector3 Random() =>
@@ -61,7 +60,7 @@ public static class Vector3Extensions
     public static bool NearZero(this Vector3 v)
     {
         const double s = 1e-8;
-        return System.Math.Abs(v.X) < s && System.Math.Abs(v.Y) < s && System.Math.Abs(v.Z) < s;
+        return MathF.Abs(v.X) < s && MathF.Abs(v.Y) < s && MathF.Abs(v.Z) < s;
     }
 
     public static Vector3 Reflect(Vector3 lhs, Vector3 rhs) => lhs - 2.0f * Vector3.Dot(lhs, rhs) * rhs;
@@ -76,12 +75,9 @@ public static class Vector3Extensions
 
     public static Vector3 Refract(Vector3 uv, Vector3 n, float etaiOverEtat)
     {
-        var cosTheta = System.Math.Min(Vector3.Dot(-uv, n), 1.0f);
+        var cosTheta = MathF.Min(Vector3.Dot(-uv, n), 1.0f);
         var rOutPerp = etaiOverEtat * (uv + cosTheta * n);
-        var rOutParallel = (float)-System.Math.Sqrt(
-            System.Math.Abs(1.0f - rOutPerp.LengthSquared())
-        ) * n;
-
+        var rOutParallel = -MathF.Sqrt(MathF.Abs(1.0f - rOutPerp.LengthSquared())) * n;
         return rOutPerp + rOutParallel;
     }
 }

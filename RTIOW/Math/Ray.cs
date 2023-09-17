@@ -2,7 +2,9 @@
 
 namespace RTIOW.Math;
 
-public readonly record struct Ray(Vector3 Origin, Vector3 Direction)
+public readonly ref struct Ray(Vector3 origin, Vector3 direction)
 {
     public Vector3 At(float t) => Origin + t * Direction;
+    public Vector3 Direction { get; } = direction;
+    public Vector3 Origin { get; } = origin;
 }

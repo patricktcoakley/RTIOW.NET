@@ -1,15 +1,8 @@
-﻿using RTIOW.Math;
+﻿namespace RTIOW.Hittable;
 
-namespace RTIOW.Hittable;
-
-public class HittableList : IHittable
+public class HittableList(IEnumerable<IHittable> objects) : IHittable
 {
-    private readonly List<IHittable> _objects;
-
-    public HittableList(params IHittable[] objects)
-    {
-        _objects = new List<IHittable>(objects);
-    }
+    private readonly ReadOnlyMemory<IHittable> _objects = objects.ToArray();
 
     public bool Hit(Ray ray, float tMin, float tMax, ref HitRecord hitRecord)
     {
@@ -17,7 +10,7 @@ public class HittableList : IHittable
         var hitAnything = false;
         var closestSoFar = tMax;
 
-        foreach (var obj in _objects)
+        foreach (var obj in _objects.Span)
         {
             if (!obj.Hit(ray, tMin, closestSoFar, ref tempHitRecord))
             {
@@ -31,8 +24,4 @@ public class HittableList : IHittable
 
         return hitAnything;
     }
-
-    public void Clear() => _objects.Clear();
-    public void Add(IHittable hittable) => _objects.Add(hittable);
-    public void AddRange(ICollection<IHittable> hittables) => _objects.AddRange(hittables);
 }
